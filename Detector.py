@@ -57,58 +57,82 @@ class Detector:
             self.__url = input_url
         else:
             self.__url = "http://" + input_url
-        self.__inited = True
         self.__interval = interval
         self.__count = 0
+        self.trigger_need_old = False
+        self.judging_need_old = False
+        self.__old_change = ""
 
-    def start(
-            self,
-            extract_function,
-            function_to_act_if_changed,
-            function_args=False):
+    def start(self):
 
+        assert self.__init
         thread = threading.Thread(
             target=self.loop_thread,
-            name="thread1",
-            args=(
-                extract_function,
-                function_to_act_if_changed,
-                function_args,
-            ))
+            name="thread1",)
         thread.start()
         print("Detect Thread started.")
 
-    def loop_thread(self, extract_function, function, args=False):
+    def loop_thread(self):
 
         def check(old, init=False):
             if not init:
+
                 content = requests.get(self.__url).text
-                now = extract_function(content)
+                now = self.extract_function(content)
                 print("Now the %s check." % str(self.__count + 1))
                 self.__count += 1
 
-                if not old == now:
-                    if not args:
-                        function(now)
+                # trigger the function
+                def trigger():
+
+                    print("Triggered.New Val:" + now)
+                    if self.trigger_need_old:
+                        # if it is the first change:
+                        if self.__old_change:
+                            self.function_after_trigger(now, self.__old_change)
+                        else:
+                            self.function_after_trigger(now, now)
                     else:
-                        function(now, args)
+                        self.function_after_trigger(now)
+
+                    self.__old_change = now
+
+                # if need the judge function
+                if self.judging_function:
+                    if self.judging_need_old:
+                        if self.__old_change:
+                            if self.judging_function(now, self.__old_change):
+                                trigger()
+                        else:
+                            if self.judging_function(now, now):
+                                trigger()
+
+                    else:
+                        if self.judging_function(now):
+                            trigger()
+                    print("No change.Now result:%s" % now)
+                    return now
+
+                # if the judge function has not been required
+                elif not old == now:
+                    trigger()
                     return now
                 print("No change.Now result:%s" % now)
                 return now
+
             else:
                 # Execute the init check
                 content = requests.get(self.__url).text
-                now = extract_function(content)
+                now = self.extract_function(content)
                 print("Now the %s check." % str(self.__count + 1))
                 self.__count += 1
                 print("Now result:%s" % now)
                 return now
 
-        if self.__inited:
-            old_stamp = time.time()
-            old_content = check("Nothing", True)
-            while True:
-                if time.time() - old_stamp >= self.__interval:
-                    old_stamp = time.time()
-                    old_content = check(old_content)
-                time.sleep(1)
+        old_stamp = time.time()
+        old_content = check("Nothing", True)
+        while True:
+            if time.time() - old_stamp >= self.__interval:
+                old_stamp = time.time()
+                old_content = check(old_content)
+            time.sleep(1)
