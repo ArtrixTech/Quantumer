@@ -6,18 +6,18 @@ import urllib
 import queue
 
 url = "https://bbs.meizu.cn/home.php?mod=space&uid=3088580&do=thread&from=space"
-url2="https://bbs.meizu.cn/thread-6616106-1-1.html"
+url2 = "https://bbs.meizu.cn/thread-6616106-1-1.html"
 con = requests.get(url).text
 
 
 def cut_string(input_str, head, tail):
     if isinstance(
-            head,
-            str) and isinstance(
-        tail,
+        head,
         str) and isinstance(
-        input_str,
-        str):
+            tail,
+            str) and isinstance(
+            input_str,
+            str):
         start = input_str.find(head) + len(head)
         end = input_str.find(tail, start)
 
@@ -55,17 +55,22 @@ def do(content):
 
     send_message()
 
+
 def do2(content):
     print(content)
 
-def judge(new,old):
-    if int(new)-int(old)>=2:
+
+def judge(new, old):
+    if int(new) - int(old) >= 5:
         print("OK!_______________________________")
+        return True
+    else:
+        return False
 
 
-detector = Detector.Detector(url2,10)
-detector.extract_function=get
-detector.function_after_trigger=do2
-detector.judging_function=judge
-detector.judging_need_old=True
+detector = Detector.Detector(url2, 2)
+detector.extract_function = get
+detector.function_after_trigger = do2
+detector.judging_function = judge
+detector.judging_need_old = True
 detector.start()

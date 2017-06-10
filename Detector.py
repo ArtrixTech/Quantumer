@@ -103,13 +103,15 @@ class Detector:
                         if self.__old_change:
                             if self.judging_function(now, self.__old_change):
                                 trigger()
+                                return now
                         else:
                             if self.judging_function(now, now):
                                 trigger()
-
+                                return now
                     else:
                         if self.judging_function(now):
                             trigger()
+                            return now
                     print("No change.Now result:%s" % now)
                     return now
 
@@ -126,6 +128,7 @@ class Detector:
                 now = self.extract_function(content)
                 print("Now the %s check." % str(self.__count + 1))
                 self.__count += 1
+                self.__old_change = now
                 print("Now result:%s" % now)
                 return now
 
