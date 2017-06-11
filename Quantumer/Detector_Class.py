@@ -13,6 +13,8 @@ class Detector:
     __function_after_trigger = False
     __extract_function = False
     __judging_function = False
+    username=False
+    extract_function_args=False
 
     @property
     def function_after_trigger(self):
@@ -50,7 +52,10 @@ class Detector:
         self.__init = True
         self.__judging_function = value
 
-    def __init__(self, input_url, interval=20):
+    # def __init__(self, input_url, interval=20):
+
+    def start_listening(self, input_url, interval=20):
+
         # Unit of interval: Second.
         # Ensure the url has a correct syntax
         if "http://" in input_url or "https://" in input_url:
@@ -62,8 +67,6 @@ class Detector:
         self.trigger_need_old = False
         self.judging_need_old = False
         self.__old_change = ""
-
-    def start(self):
 
         assert self.__init
         thread = threading.Thread(
@@ -78,7 +81,8 @@ class Detector:
             if not init:
 
                 content = requests.get(self.__url).text
-                now = self.extract_function(content)
+                self.extract_function_args["content"] = content
+                now = self.extract_function(self.extract_function_args)
                 print("Now the %s check." % str(self.__count + 1))
                 self.__count += 1
 
@@ -89,11 +93,11 @@ class Detector:
                     if self.trigger_need_old:
                         # if it is the first change:
                         if self.__old_change:
-                            self.function_after_trigger(now, self.__old_change)
+                            self.function_after_trigger(self.username,now, self.__old_change)
                         else:
-                            self.function_after_trigger(now, now)
+                            self.function_after_trigger(self.username,now, now)
                     else:
-                        self.function_after_trigger(now)
+                        self.function_after_trigger(self.username,now)
 
                     self.__old_change = now
 
@@ -125,7 +129,9 @@ class Detector:
             else:
                 # Execute the init check
                 content = requests.get(self.__url).text
-                now = self.extract_function(content)
+                print(self.extract_function_args)
+                self.extract_function_args["content"]=content
+                now = self.extract_function(self.extract_function_args)
                 print("Now the %s check." % str(self.__count + 1))
                 self.__count += 1
                 self.__old_change = now
@@ -135,7 +141,7 @@ class Detector:
         old_stamp = time.time()
         old_content = check("Nothing", True)
         while True:
-            if time.time() - old_stamp >= self.__interval:
+            if time.time() - old_stamp >= int(self.__interval):
                 old_stamp = time.time()
                 old_content = check(old_content)
             time.sleep(1)

@@ -1,13 +1,6 @@
-import requests
-import Detector
-import os
-import re
-import urllib
-import queue
+from Quantumer import Quantumer
 
-url = "https://bbs.meizu.cn/home.php?mod=space&uid=3088580&do=thread&from=space"
-url2 = "https://bbs.meizu.cn/thread-6616106-1-1.html"
-con = requests.get(url).text
+
 
 
 def cut_string(input_str, head, tail):
@@ -67,10 +60,10 @@ def judge(new, old):
     else:
         return False
 
-
-detector = Detector.Detector(url2, 2)
-detector.extract_function = get
-detector.function_after_trigger = do2
-detector.judging_function = judge
-detector.judging_need_old = True
-detector.start()
+quantumer = Quantumer()
+det=quantumer.new_detector()
+det.extract_function = get
+det.function_after_trigger = do2
+det.judging_function = judge
+det.judging_need_old = True
+det.start_listening(url2, 2)
