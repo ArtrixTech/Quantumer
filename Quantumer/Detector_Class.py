@@ -2,6 +2,7 @@ import requests
 import re
 import threading
 import time
+from Quantumer import Quantumer
 from types import FunctionType
 import urllib
 import queue
@@ -134,6 +135,7 @@ class Detector:
                 content = requests.get(self.__url).text
                 self.extract_function_args["content"] = content
                 now = self.extract_function(self.extract_function_args)
+                Quantumer.first_result_show(self.username,"测试提取:"+now)
                 print("Now the %s check." % str(self.__count + 1))
                 self.__count += 1
                 self.__old_change = now

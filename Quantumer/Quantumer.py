@@ -55,6 +55,10 @@ def do(username, new_val):
     itchat.send("changed!NewVal:" + new_val, username)
 
 
+def first_result_show(username,content):
+    itchat.send(content,username)
+
+
 @itchat.msg_register(TEXT)
 def simple_reply(msg):
     if msg['Type'] == 'Text':
