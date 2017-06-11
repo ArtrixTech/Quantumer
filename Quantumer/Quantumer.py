@@ -75,6 +75,8 @@ def simple_reply(msg):
                 old_det = detector_pool[user_name]
                 assert isinstance(old_det, Detector)
                 old_det.stop = True
+            else:
+                itchat.send("开始新任务",user_name)
             det = new_detector(user_name)
 
             url = ExtractFunction.cut_string(command, "url=", ",")
