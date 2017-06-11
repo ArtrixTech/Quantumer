@@ -30,14 +30,16 @@ class ExtractFunction:
     @staticmethod
     def one(kw):
 
-        ret_str = ExtractFunction.cut_string(kw["content"], kw["head"], kw["tail"])
+        ret_str = ExtractFunction.cut_string(
+            kw["content"], kw["head"], kw["tail"])
 
         return ret_str
 
     @staticmethod
     def two(kw):
 
-        ret_str = ExtractFunction.cut_string(kw["content"], kw["head"], kw["tail"])
+        ret_str = ExtractFunction.cut_string(
+            kw["content"], kw["head"], kw["tail"])
         ret_str = ExtractFunction.cut_string(ret_str, kw["head2"], kw["tail2"])
 
         return ret_str
@@ -48,8 +50,10 @@ def new_detector(username):
     detector_pool[username] = det
     return det
 
-def do(username,new_val):
-    itchat.send("changed!NewVal:"+new_val,username)
+
+def do(username, new_val):
+    itchat.send("changed!NewVal:" + new_val, username)
+
 
 @itchat.msg_register(TEXT)
 def simple_reply(msg):
@@ -59,6 +63,18 @@ def simple_reply(msg):
 
             command = text.replace("开始监听,", "")
             user_name = msg['FromUserName']
+            print("User:" + user_name + "开始新任务")
+            exist=False
+            try:
+                assert isinstance(detector_pool[user_name], Detector)
+                exist=True
+            except:pass
+
+            if exist:
+                itchat.send("开始新任务！旧任务已停止",user_name)
+                old_det = detector_pool[user_name]
+                assert isinstance(old_det, Detector)
+                old_det.stop = True
             det = new_detector(user_name)
 
             url = ExtractFunction.cut_string(command, "url=", ",")
@@ -70,16 +86,32 @@ def simple_reply(msg):
                 head2 = ExtractFunction.cut_string(command, "head2=", ",")
                 tail2 = ExtractFunction.cut_string(command, "tail2=", ",")
                 det.extract_function = ExtractFunction.two
-                det.extract_function_args = {"head":head, "tail":tail, "head2":head2, "tail2":tail2}
+                det.extract_function_args = {
+                    "head": head, "tail": tail, "head2": head2, "tail2": tail2}
             else:
                 det.extract_function = ExtractFunction.one
-                det.extract_function_args = {"head":head, "tail":tail}
+                det.extract_function_args = {"head": head, "tail": tail}
 
-            det.username=user_name
-            det.function_after_trigger=do
+            det.username = user_name
+            det.function_after_trigger = do
             det.start_listening(url, interval)
 
-            return msg['FromUserName']
+            return
+
+        elif "停止监听" in text:
+
+            user_name = msg['FromUserName']
+            exist = False
+            try:
+                assert isinstance(detector_pool[user_name], Detector)
+                exist = True
+            except:pass
+
+            if exist:
+                old_det = detector_pool[user_name]
+                assert isinstance(old_det, Detector)
+                old_det.stop = True
+            return "任务停止"
 
         else:
             return "命令有误，请重新输入"
@@ -100,4 +132,3 @@ def start():
         target=itchat.run,
         name="thread1", )
     thread.start()
-

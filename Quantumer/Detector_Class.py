@@ -13,8 +13,9 @@ class Detector:
     __function_after_trigger = False
     __extract_function = False
     __judging_function = False
-    username=False
-    extract_function_args=False
+    username = False
+    extract_function_args = False
+    stop = False
 
     @property
     def function_after_trigger(self):
@@ -93,11 +94,13 @@ class Detector:
                     if self.trigger_need_old:
                         # if it is the first change:
                         if self.__old_change:
-                            self.function_after_trigger(self.username,now, self.__old_change)
+                            self.function_after_trigger(
+                                self.username, now, self.__old_change)
                         else:
-                            self.function_after_trigger(self.username,now, now)
+                            self.function_after_trigger(
+                                self.username, now, now)
                     else:
-                        self.function_after_trigger(self.username,now)
+                        self.function_after_trigger(self.username, now)
 
                     self.__old_change = now
 
@@ -129,8 +132,7 @@ class Detector:
             else:
                 # Execute the init check
                 content = requests.get(self.__url).text
-                print(self.extract_function_args)
-                self.extract_function_args["content"]=content
+                self.extract_function_args["content"] = content
                 now = self.extract_function(self.extract_function_args)
                 print("Now the %s check." % str(self.__count + 1))
                 self.__count += 1
@@ -145,3 +147,5 @@ class Detector:
                 old_stamp = time.time()
                 old_content = check(old_content)
             time.sleep(1)
+            if self.stop:
+                break
