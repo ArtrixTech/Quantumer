@@ -113,8 +113,7 @@ def simple_reply(msg):
         if g.step == 2:
             g.content = str(msg['Text'])
             g.step = 3
-            itchat.send("复制以下内容，发送至本账号即可开始监听:", user_name)
-            itchat.send("（如果需要直接开始，请输入“开始”）", user_name)
+            itchat.send("请输入“开始”以开始监听，或者复制以下内容，发送至本账号来开始监听。", user_name)
             return g.generate()
         if g.step == 3:
             g.step = 0
