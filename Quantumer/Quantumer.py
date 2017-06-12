@@ -108,13 +108,13 @@ def simple_reply(msg):
             return "输入每次刷新时间（秒），建议10秒"
         if g.step == 1:
             g.interval = str(msg['Text'])
-            g.step=2
+            g.step = 2
             return "输入要抓取的内容"
         if g.step == 2:
             g.content = str(msg['Text'])
             g.is_guide = False
             g.step = 0
-            itchat.send("复制以下内容，发送至本账号即可开始监听:",user_name)
+            itchat.send("复制以下内容，发送至本账号即可开始监听:", user_name)
             return g.generate()
 
     if msg['Type'] == 'Text':
@@ -175,7 +175,7 @@ def simple_reply(msg):
                 old_det = detector_pool[user_name]
                 assert isinstance(old_det, Detector)
                 old_det.stop = True
-                detector_pool[user_name]=False
+                detector_pool[user_name] = False
             return "任务停止"
 
         elif "生成命令" in text:
