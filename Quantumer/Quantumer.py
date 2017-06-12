@@ -175,6 +175,7 @@ def simple_reply(msg):
                 old_det = detector_pool[user_name]
                 assert isinstance(old_det, Detector)
                 old_det.stop = True
+                detector_pool[user_name]=False
             return "任务停止"
 
         elif "生成命令" in text:
