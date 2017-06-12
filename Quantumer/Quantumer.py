@@ -127,7 +127,7 @@ def simple_reply(msg):
             try:
                 assert isinstance(detector_pool[user_name], Detector)
                 exist = True
-            except:
+            except TypeError:
                 pass
 
             if exist:
@@ -139,6 +139,7 @@ def simple_reply(msg):
                 itchat.send("开始新任务", user_name)
             det = new_detector(user_name)
 
+            # Get arguments from the WeChat commands.
             url = ExtractFunction.cut_string(command, "url=", ",")
             head = ExtractFunction.cut_string(command, "head1=", ",")
             tail = ExtractFunction.cut_string(command, "tail1=", ",")
@@ -151,10 +152,15 @@ def simple_reply(msg):
                 det.extract_function_args = {
                     "head": head, "tail": tail, "head2": head2, "tail2": tail2}
             else:
-                print("one")
                 det.extract_function = ExtractFunction.one
                 det.extract_function_args = {"head": head, "tail": tail}
 
+            def send_task_message():
+                itchat.send("任务信息：", user_name)
+                itchat.send("url：", url)
+                itchat.send("间隔Interval：", interval)
+
+            send_task_message()
             det.username = user_name
             det.function_after_trigger = do
             det.start_listening(url, interval)
@@ -168,7 +174,7 @@ def simple_reply(msg):
             try:
                 assert isinstance(detector_pool[user_name], Detector)
                 exist = True
-            except:
+            except TypeError:
                 pass
 
             if exist:
@@ -189,7 +195,7 @@ def simple_reply(msg):
 def add_friend(msg):
     itchat.add_friend(**msg['Text'])  # 该操作会自动将新好友的消息录入，不需要重载通讯录
     itchat.send_msg(
-        '你好！信息格式：开始监听,url=%your_url%,head1=%your_url%,tail1=%your_url%,head2=%your_url%,tail2=%your_url%,interval=%second%',
+        '你好！请输入“生成命令”来开始一个新的任务。Hello!Please enter "生成命令" to start a new task!',
         msg['RecommendInfo']['UserName'])
 
 itchat.auto_login(hotReload=True, enableCmdQR=1)
