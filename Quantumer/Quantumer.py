@@ -140,6 +140,8 @@ def simple_reply(msg):
                 pass
             except KeyError:
                 pass
+            except AssertionError:
+                pass
 
             if exist:
                 itchat.send("开始新任务！旧任务已停止", user_name)
@@ -188,6 +190,8 @@ def simple_reply(msg):
             except TypeError:
                 pass
             except KeyError:
+                pass
+            except AssertionError:
                 pass
 
             if exist:
