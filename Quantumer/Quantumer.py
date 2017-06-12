@@ -115,7 +115,7 @@ def simple_reply(msg):
             g.is_guide = False
             g.step = 3
             itchat.send("复制以下内容，发送至本账号即可开始监听:", user_name)
-            itchat.send("（如果需要直接开始，请输入“开始”。）", user_name)
+            itchat.send("（如果需要直接开始，请输入“开始”）", user_name)
             return g.generate()
         if g.step == 3:
             g.step = 0
