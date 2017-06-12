@@ -159,8 +159,8 @@ def simple_reply(msg):
 
             def send_task_message():
                 itchat.send("任务信息：", user_name)
-                itchat.send("url：", url)
-                itchat.send("间隔Interval：", interval)
+                itchat.send("url：" + url, user_name)
+                itchat.send("间隔Interval：" + interval, user_name)
 
             send_task_message()
             det.username = user_name
