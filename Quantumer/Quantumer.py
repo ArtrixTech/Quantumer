@@ -129,6 +129,8 @@ def simple_reply(msg):
                 exist = True
             except TypeError:
                 pass
+            except KeyError:
+                pass
 
             if exist:
                 itchat.send("开始新任务！旧任务已停止", user_name)
@@ -175,6 +177,8 @@ def simple_reply(msg):
                 assert isinstance(detector_pool[user_name], Detector)
                 exist = True
             except TypeError:
+                pass
+            except KeyError:
                 pass
 
             if exist:
