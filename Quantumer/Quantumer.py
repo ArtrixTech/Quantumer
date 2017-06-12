@@ -112,17 +112,20 @@ def simple_reply(msg):
             return "输入要抓取的内容"
         if g.step == 2:
             g.content = str(msg['Text'])
-            g.is_guide = False
             g.step = 3
             itchat.send("复制以下内容，发送至本账号即可开始监听:", user_name)
             itchat.send("（如果需要直接开始，请输入“开始”）", user_name)
             return g.generate()
         if g.step == 3:
             g.step = 0
+            g.is_guide = False
             if "开始" in str(msg['Text']):
                 m = msg
                 m['Text'] = g.generate()
                 simple_reply(m)
+                return ""
+            else:
+                return "取消自动开始"
 
     if msg['Type'] == 'Text':
         text = str(msg['Text'])
